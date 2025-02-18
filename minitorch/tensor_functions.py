@@ -106,8 +106,10 @@ class Mul(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        a, b = ctx.saved_values
+        return b * grad_output, a * grad_output
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class Sigmoid(Function):
@@ -115,13 +117,16 @@ class Sigmoid(Function):
     def forward(ctx: Context, t1: Tensor) -> Tensor:
         ctx.save_for_backward(t1)
         return t1.f.sigmoid_map(t1)
+        t1.f.sig
         # # TODO: Implement for Task 2.3.
         # raise NotImplementedError("Need to implement for Task 2.3")
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        t1 = ctx.saved_values
+        return t1.f.sigmoid_back_zip(t1, grad_output)
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class ReLU(Function):
@@ -134,8 +139,10 @@ class ReLU(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        t1 = ctx.saved_values
+        return t1.f.relu_back_zip(t1, grad_output)
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class Log(Function):
@@ -148,8 +155,10 @@ class Log(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        t1 = ctx.saved_values
+        return grad_output.f.log_back_zip(t1, grad_output)
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class Exp(Function):
@@ -162,8 +171,10 @@ class Exp(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        t1 = ctx.saved_values
+        return grad_output.f.mul_zip(t1.f.exp_map(t1), grad_output)
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class Sum(Function):
@@ -196,8 +207,12 @@ class LT(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        return (
+            grad_output.zeros(grad_output.shape),
+            grad_output.zeros(grad_output.shape)
+        )
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class EQ(Function):
@@ -209,8 +224,12 @@ class EQ(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        return (
+            grad_output.zeros(grad_output.shape),
+            grad_output.zeros(grad_output.shape)
+        )
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class IsClose(Function):
@@ -230,8 +249,15 @@ class Permute(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
-        # TODO: Implement for Task 2.4.
-        raise NotImplementedError("Need to implement for Task 2.4")
+        a, order = ctx.saved_values
+        return Tensor.make(
+                    grad_output._tensor._storage,
+                    a._tensor.shape,
+                    a._tensor.strides,
+                    backend=grad_output.backend,
+                )
+        # # TODO: Implement for Task 2.4.
+        # raise NotImplementedError("Need to implement for Task 2.4")
 
 
 class View(Function):

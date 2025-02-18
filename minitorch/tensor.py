@@ -337,7 +337,7 @@ class Tensor:
 
     def is_leaf(self) -> bool:
         "True if this variable created by the user (no `last_fn`)"
-        return self.history is not None and self.history.last_fn is None
+        return self.history is None or self.history.last_fn is None
 
     def is_constant(self) -> bool:
         return self.history is None
