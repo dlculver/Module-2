@@ -91,8 +91,19 @@ def broadcast_index(
     Returns:
         None
     """
-    # TODO: Implement for Task 2.2.
-    raise NotImplementedError("Need to implement for Task 2.2")
+    ndims_big = len(big_shape)
+    ndims_small = len(shape)
+
+    # get the offset (for aligning)
+    offset = ndims_big - ndims_small
+
+    for i in range(ndims_small):
+        if shape[i] == 1:
+            out_index[i] = 0 # if shape is 1 then we always assume out_index 0
+        else:
+            out_index[i] = big_index[i + offset] 
+    # # TODO: Implement for Task 2.2.
+    # raise NotImplementedError("Need to implement for Task 2.2")
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
@@ -109,8 +120,26 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     Raises:
         IndexingError : if cannot broadcast
     """
-    # TODO: Implement for Task 2.2.
-    raise NotImplementedError("Need to implement for Task 2.2")
+    len1, len2 = len(shape1), len(shape2)
+    max_len = max(len1, len2)
+
+    # pad with 1s
+    padded_shape1 = (1,) * (max_len - len1) + tuple(shape1)
+    padded_shape2 = (1,) * (max_len - len2) + tuple(shape2)
+
+    broadcast_shape = []
+
+    for dim1, dim2 in zip(padded_shape1, padded_shape2):
+        if dim1 == dim2 or dim1 == 1 or dim2 == 1:
+            broadcast_shape.append(max(dim1, dim2))
+        else:
+            raise IndexingError(
+                f"Shapes {shape1} and {shape2} are not broadcastable."
+            )
+
+    return tuple(broadcast_shape)
+    # # TODO: Implement for Task 2.2.
+    # raise NotImplementedError("Need to implement for Task 2.2")
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
