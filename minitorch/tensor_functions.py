@@ -123,7 +123,7 @@ class Sigmoid(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        t1 = ctx.saved_values
+        (t1,) = ctx.saved_values
         return t1.f.sigmoid_back_zip(t1, grad_output)
         # # TODO: Implement for Task 2.4.
         # raise NotImplementedError("Need to implement for Task 2.4")
@@ -139,7 +139,7 @@ class ReLU(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        t1 = ctx.saved_values
+        (t1,) = ctx.saved_values
         return t1.f.relu_back_zip(t1, grad_output)
         # # TODO: Implement for Task 2.4.
         # raise NotImplementedError("Need to implement for Task 2.4")
@@ -155,7 +155,7 @@ class Log(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        t1 = ctx.saved_values
+        (t1,) = ctx.saved_values
         return grad_output.f.log_back_zip(t1, grad_output)
         # # TODO: Implement for Task 2.4.
         # raise NotImplementedError("Need to implement for Task 2.4")
@@ -171,7 +171,7 @@ class Exp(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        t1 = ctx.saved_values
+        (t1,) = ctx.saved_values
         return grad_output.f.mul_zip(t1.f.exp_map(t1), grad_output)
         # # TODO: Implement for Task 2.4.
         # raise NotImplementedError("Need to implement for Task 2.4")
@@ -243,7 +243,18 @@ class IsClose(Function):
 class Permute(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, order: Tensor) -> Tensor:
-        return a.permute(order)
+        ctx.save_for_backward(a, order)
+        # Convert the order tensor's storage to a list of ints.
+        order_list = [int(x) for x in order._tensor._storage]
+        # Call the underlying tensor_data.permute with these ints.
+        tens_store = a._tensor.permute(*order_list)
+        return Tensor.make(
+            tens_store._storage,
+            tens_store.shape,
+            tens_store.strides,
+            backend=a.backend,
+        )
+
         # # TODO: Implement for Task 2.3.
         # raise NotImplementedError("Need to implement for Task 2.3")
 

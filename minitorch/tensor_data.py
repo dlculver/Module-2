@@ -255,15 +255,22 @@ class TensorData:
         Returns:
             New `TensorData` with the same storage and a new dimension order.
         """
-        assert list(sorted(order)) == list(
-            range(len(self.shape))
-        ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
-
+        assert list(sorted(order)) == list(range(len(self.shape))), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
         return TensorData(
             storage=self._storage,
-            shape=tuple(self._shape[x] for x in order),
-            strides=tuple(self._strides[x] for x in order)
+            shape=tuple(int(self._shape[x]) for x in order),
+            strides=tuple(int(self._strides[x]) for x in order)
         )
+
+        # assert list(sorted(order)) == list(
+        #     range(len(self.shape))
+        # ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
+
+        # return TensorData(
+        #     storage=self._storage,
+        #     shape=tuple(self._shape[x] for x in order),
+        #     strides=tuple(self._strides[x] for x in order)
+        # )
         # # TODO: Implement for Task 2.1.
         # raise NotImplementedError("Need to implement for Task 2.1")
 
